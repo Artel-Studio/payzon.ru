@@ -14,7 +14,7 @@
 
 Вариант без дополнительных полей.
 
-<code>
+```php
 // Обязательные поля
 $api_key = '389b13b4b5e75ddc1f5ae50fd41f685f'; // Shop ID
 $secret1 = 'LKFpeejWE5R5GJKJLjdldsjLGKGJLKjl'; // Secret1
@@ -34,4 +34,4 @@ header('Location: https://payzon.ru/checkout?'.
 				'description='.$descr.'&'.
 				'shop_user_id='.$shop_user_id.'&'.
 				'signature='.$crc);
-</code>
+```
