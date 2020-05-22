@@ -47,8 +47,8 @@ $crc = md5("{$api_key}:{$inv_id}:{$amount}:{$secret1}:{$shop_abstract}:{$shop_ar
 
 ```php
 // Обязательные поля
-$api_key = '389b13b4b5e75ddc1f5ae50fd41f685f'; // Shop ID
-$secret1 = 'LKFpeejWE5R5GJKJLjdldsjLGKGJLKjl'; // Secret1
+$api_key = '389b13b4b5e75ddc1f5ae50fd41f685f'; // Shop ID из настроек вашего магазина
+$secret1 = 'LKFpeejWE5R5GJKJLjdldsjLGKGJLKjl'; // Secret1 из настроек вашего магазина
 $inv_id = 0; // Номер транзакции в системе вашего магаина. Если номера у вас не учитываются, ставьте 0
 $amount = 500.10; // Сумма в рублях. Integer, либо Float. Разделитель дробной части — точка.
 $descr = rawurlencode('Торт "Фантазия"');
@@ -85,15 +85,15 @@ header('Location: https://payzon.ru/checkout?'.
 
 ```php
 // Обязательные поля
-$api_key = $_POST['shop']; // Shop ID
-$secret2 = ''; // Secret2
-$inv_id = $_POST['shop']; // Номер транзакции в системе вашего магаина. Если номера у вас не учитываются, ставьте 0
-$order_id = $_POST['shop']; // Номер транзакции в системе вашего магаина. Если номера у вас не учитываются, ставьте 0
-$amount = $_POST['shop']; // Сумма в рублях. Integer, либо Float. Разделитель дробной части — точка.
-$signature = $_POST['shop']; // Shop ID
+$api_key = '389b13b4b5e75ddc1f5ae50fd41f685f'; // Shop ID из настроек вашего магазина
+$secret2 = 'HKHweuiwefg66g6erkhjhk'; // Secret2 из настроек вашего магазина
+$inv_id = $_POST['inv_id']; // Номер транзакции в системе вашего магаина. Если номера у вас не учитываются, ставьте 0
+$order_id = $_POST['order_id']; // Номер транзакции в системе payzon.ru
+$amount = $_POST['amount']; // Сумма в рублях. Integer, либо Float. Разделитель дробной части — точка.
+$signature = $_POST['signature']; // Контрольная сумма
 
 // Контрольная сумма
-$crc = md5("{$api_key}:{$inv_id}:{$order_id}:{$amount}:{$secret2}");
+$crc = md5("{$api_key}:{$inv_id}:{$order_id}:{$amount}:{$secret2}"); // Обратите внимание - Secret2
 
 // Перенаправляем на платёжный шлюз
 if ($signature == $crc)
@@ -104,41 +104,34 @@ if ($signature == $crc)
 
 <h3>Вариант с дополнительными полями.</h3>
 
-Есть несколько важных правил, которые следует учесть:
-
-1. Имя любого дополнительного поля должно начинаться с ```shop_``` Пример: ```shop_article```
-
-2. При формировании контрольной суммы дополнительные поля выстраиваются в алфавитном порядке.
-3. В контрольную сумму вносятся только значения полей.
-4. В контрольной сумме доп. поля располагаются после поля $secret1.
-5. Все параметры в контрольной сумме разделяются знаком ```:``` (двоеточие).
-
-$crc = md5("{$api_key}:{$inv_id}:{$amount}:{$secret1}:{$shop_abstract}:{$shop_article}:{$shop_boo}");
-
 ```php
 // Обязательные поля
-$api_key = '389b13b4b5e75ddc1f5ae50fd41f685f'; // Shop ID
-$secret1 = 'LKFpeejWE5R5GJKJLjdldsjLGKGJLKjl'; // Secret1
-$inv_id = 0; // Номер транзакции в системе вашего магаина. Если номера у вас не учитываются, ставьте 0
-$amount = 500.10; // Сумма в рублях. Integer, либо Float. Разделитель дробной части — точка.
-$descr = rawurlencode('Торт "Фантазия"');
+$api_key = '389b13b4b5e75ddc1f5ae50fd41f685f'; // Shop ID из настроек вашего магазина
+$secret2 = 'HKHweuiwefg66g6erkhjhk'; // Secret2 из настроек вашего магазина
+$inv_id = $_POST['inv_id']; // Номер транзакции в системе вашего магаина. Если номера у вас не учитываются, ставьте 0
+$order_id = $_POST['order_id']; // Номер транзакции в системе payzon.ru
+$amount = $_POST['amount']; // Сумма в рублях. Integer, либо Float. Разделитель дробной части — точка.
+$signature = $_POST['signature']; // Контрольная сумма
 
 // Дополнительные поля
-$shop_abstract = 'Какие-то ваши данные';
-$shop_article = '048645';
-$shop_boo = 'Что там вам требуется';
+$shop_abstract = $_POST['shop_abstract'];
+$shop_article = $_POST['shop_article'];
+$shop_boo = $_POST['shop_boo'];
 
 // Контрольная сумма
-$crc = md5("{$api_key}:{$inv_id}:{$amount}:{$secret1}:{$shop_abstract}:{$shop_article}:{$shop_boo}");
+$crc = md5("{$api_key}:{$inv_id}:{$order_id}:{$amount}:{$secret2}:{$shop_abstract}:{$shop_article}:{$shop_boo}"); // Обратите внимание - Secret2
 
 // Перенаправляем на платёжный шлюз
-header('Location: https://payzon.ru/checkout?'.
-	'shop='.$api_key.'&'.
-	'invoice='.(int)$inv_id.'&'.
-	'amount='.$amount.'&'.
-	'description='.$descr.'&'.
-	'shop_abstract='.$shop_abstract.'&'.
-	'shop_article='.$shop_article.'&'.
-	'shop_boo='.$shop_boo.'&'.
-	'signature='.$crc);
+if ($signature == $crc)
+{
+	// Всё ОК. Можно принимать платёж внутри вашей системы
+}
 ```
+
+<h3>Перенаправление клиента на success_url, либо на fail_url. (Этот шаг не обязателен.)</h3>
+
+После успешного платежа, если указан success_url, пользователь будет перенаправлен на success_url.
+
+После провального платежа, если указан fail_url, пользователь будет перенаправлен на fail_url.
+
+На этом платёж завершён.
