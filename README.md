@@ -26,7 +26,7 @@ $crc = md5("{$api_key}:{$inv_id}:{$amount}:{$secret1}");
 // Перенаправляем на платёжный шлюз
 header('Location: https://payzon.ru/checkout?'.
 	'shop='.$api_key.'&'.
-	'invoice='.(int)$inv_id.'&'.
+	'inv_id='.(int)$inv_id.'&'.
 	'amount='.$amount.'&'.
 	'description='.$descr.'&'.
 	'signature='.$crc);
@@ -64,7 +64,7 @@ $crc = md5("{$api_key}:{$inv_id}:{$amount}:{$secret1}:{$shop_abstract}:{$shop_ar
 // Перенаправляем на платёжный шлюз
 header('Location: https://payzon.ru/checkout?'.
 	'shop='.$api_key.'&'.
-	'invoice='.(int)$inv_id.'&'.
+	'inv_id='.(int)$inv_id.'&'.
 	'amount='.$amount.'&'.
 	'description='.$descr.'&'.
 	'shop_abstract='.$shop_abstract.'&'.
